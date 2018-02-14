@@ -164,7 +164,7 @@ public class Main extends JFrame{
 							}
 						}catch(NumberFormatException e){
 							System.out.println(e);
-							JOptionPane.showMessageDialog(new JLabel(e.toString()), "Error");
+							JOptionPane.showMessageDialog(new JLabel(e.toString()), "Invalid input.");
 						}
 					}
 				}
