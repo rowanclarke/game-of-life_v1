@@ -4,9 +4,12 @@ import java.awt.event.*;
 import javax.swing.*;
 import java.util.ArrayList;
 public class Main extends JFrame{
+	// starting function
 	public static void main(String[] args) {
+		// create a new instance of Main()
 		new Main();
 	}
+	// initialise global variables
 	private static final long serialVersionUID = 1L;
 	public Paint canvas;
 	public Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
@@ -16,7 +19,9 @@ public class Main extends JFrame{
 	public ArrayList<ArrayList<Boolean>> list = new ArrayList<ArrayList<Boolean>>();
 	public ArrayList<ArrayList<Boolean>> temp_list = new ArrayList<ArrayList<Boolean>>();
 	public double percentRnd = 0.15;
+	
 	public Main() {
+		// create a new instance of Paint()
 		canvas = new Paint();
 		Container c = getContentPane();
 		c.add(canvas);
@@ -32,72 +37,38 @@ public class Main extends JFrame{
 				temp_list.get(i).add(false);	
 			}
 		}
+		// use Events from java.awt.event
 		addKeyListener(new KeyAdapter() {
 			public void keyPressed(KeyEvent ke) {
+				// if escape is pressed, dispose the window (exit)
 				if (ke.getKeyCode() == KeyEvent.VK_ESCAPE) {
 					dispose();
 				}
-			}
-		});
-		addKeyListener(new KeyAdapter() {
-			public void keyPressed(KeyEvent ke) {
-				if (ke.getKeyCode() == KeyEvent.VK_R) {
-					//create random field
-					double rndDec;
-					for (int i = 0; i < list.size(); i++) {
-						for (int j = 0; j < list.get(i).size(); j++) {
-							rndDec = Math.random();
-							if (rndDec < percentRnd) {
-								list.get(i).set(j, true);
-							}
-						}
-					}
-					canvas.repaint();
-				}
-			}
-		});
-		addKeyListener(new KeyAdapter() {
-			public void keyPressed(KeyEvent ke) {
-				if (ke.getKeyCode() == KeyEvent.VK_C) {
-					//clear field
-					for (int i = 0; i < list.size(); i++) {
-						for (int j = 0; j < list.get(i).size(); j++) {
-							list.get(i).set(j, false);
-						}
-					}	
-					canvas.repaint();
-				}
-			}
-		});
-
-		addKeyListener(new KeyAdapter() {
-			@SuppressWarnings("unchecked")
-			public void keyPressed(KeyEvent ke) {
-				if (ke.getKeyCode() == KeyEvent.VK_SPACE) {
+				// if space is pressed, compute and render the next generation
+				else if (ke.getKeyCode() == KeyEvent.VK_SPACE) {
+					// initialise local variables
 					int neighbours = 0;
 					int x = 0;
-					int y = 0;		
+					int y = 0;
+					/** clone but not copy the original list of cells as temp
+					  * this is done so when we modify the cells, it doesn't
+					  * affect the original outcome.
+					  **/
 					for (int i = 0; i < list.size(); i++) {
 						temp_list.set(i, (ArrayList<Boolean>) list.get(i).clone());
 					}
+					// cycle through each cell counting the amount of cells near it 
 					for (int i = 0; i < list.size(); i++) {
 						for (int j = 0; j < list.get(i).size(); j++) {
 							neighbours = 0;
 							for (int a = -1; a < 2; a++) {
 								for (int b = -1; b < 2; b++) {
 									x = i+a;
-									y = j+b;	
-									if (x < 0 || x >= list.size() || y < 0 || y >= list.get(i).size()) {
-										
-									}
-									else {
-										if (list.get(x).get(y)) {
-											
-											neighbours++;
-										}
-									}
+									y = j+b;
+									if ((x < 0 || x >= list.size() || y < 0 || y >= list.get(i).size()) && list.get(x).get(y)) neighbours++;
 								}
 							}
+							// rules for Game of Life dictating the next generation
 							if (list.get(i).get(j)) {
 								neighbours--;
 							}
@@ -120,8 +91,32 @@ public class Main extends JFrame{
 					for (int i = 0; i < list.size(); i++) {
 						list.set(i, (ArrayList<Boolean>) temp_list.get(i).clone());
 					}
+					// repaint the window
 					canvas.repaint();	
 				}
+				else if (ke.getKeyCode() == KeyEvent.VK_R) {
+					//create random field
+					double rndDec;
+					for (int i = 0; i < list.size(); i++) {
+						for (int j = 0; j < list.get(i).size(); j++) {
+							rndDec = Math.random();
+							if (rndDec < percentRnd) {
+								list.get(i).set(j, true);
+							}
+						}
+					}
+					canvas.repaint();
+				} 
+				else if (ke.getKeyCode() == KeyEvent.VK_C) {
+					//clear field
+					for (int i = 0; i < list.size(); i++) {
+						for (int j = 0; j < list.get(i).size(); j++) {
+							list.get(i).set(j, false);
+						}
+					}	
+					canvas.repaint();
+				}
+				
 			}
 		});
 		addMouseListener(new MouseAdapter() {
@@ -170,7 +165,7 @@ public class Main extends JFrame{
 				}
 			}
 		});
-		
+		// set window properties
 		setExtendedState(JFrame.MAXIMIZED_BOTH); 
 		setUndecorated(true);
 		setDefaultCloseOperation(EXIT_ON_CLOSE); 
@@ -181,9 +176,11 @@ public class Main extends JFrame{
 	
 	public class Paint extends JPanel{
 		private static final long serialVersionUID = 1L;
-
+		// paint the window using Graphics from java.awt 
 		public void paintComponent(Graphics g) {
+			// clear the screen
 			g.clearRect(0, 0,(int) width,(int) height);
+			// render each pixel
 			for (int i = 0; i < list.size(); i++) {
 				for (int j = 0; j < list.get(i).size(); j++) {
 					if (list.get(i).get(j)) {
