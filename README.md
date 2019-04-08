@@ -1,2 +1,2 @@
 # java-game-of-life
-Conway's game of life simulation
+Conway's Game of Life simulation
